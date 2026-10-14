@@ -135,6 +135,14 @@ If you add more than 10 lights, increase "max: 10" accordingly.
 
 ***
 
+## Related project
+
+For hold-to-dim with lights connected through other integrations, see
+[Dynamic Dimming](https://github.com/nohat/dynamic_dimming). It provides move,
+stop, and step actions across supported platforms, using device-side movement
+where available and stepped simulation otherwise. It is a separate project;
+see its documentation for supported devices and limitations.
+
 ## Uninstall
 
 This integration follows standard integration removal.
