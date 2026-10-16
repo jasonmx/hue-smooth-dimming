@@ -68,9 +68,9 @@ buttons_released:
 
 ---
 
-### Set Scenes, Brightness, Color & Color Temperature While Light Is Off
+### Set Lights While Off
 
-Lets you set scenes, brightness, color and CT while lights are off, so that they turn on consistently how you want them without unwanted flashes.
+Set scenes, brightness, color and color temperature while the lights are off, so that they turn on how you want them without unwanted flashes.
 
 | Action | Description |
 | :--- | :--- |
