@@ -2,7 +2,8 @@ import functools
 import logging
 
 import voluptuous as vol
-from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse, callback
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.util.color import color_xy_to_hs, color_xy_to_RGB
 
@@ -20,6 +21,7 @@ from .const import (
     DEFAULT_SWEEP_TIME,
     DIR_DOWN,
     DIR_UP,
+    DOMAIN,
     SERVICE_GET_ATTRIBUTES,
     SERVICE_LOWER,
     SERVICE_RAISE,
@@ -170,3 +172,21 @@ SERVICES: dict = {
     SERVICE_SET_ATTRIBUTES: (_handle_set_attributes, SCHEMA_SET_ATTRIBUTES, SupportsResponse.NONE),
     SERVICE_GET_ATTRIBUTES: (_handle_get_attributes, SCHEMA_GET_ATTRIBUTES, SupportsResponse.ONLY),
 }
+
+
+async def _call_if_loaded(handler, hass: HomeAssistant, call: ServiceCall):
+    if not hass.config_entries.async_loaded_entries(DOMAIN):
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_loaded")
+    return await handler(hass, call)
+
+
+@callback
+def async_setup_services(hass: HomeAssistant):
+    for svc_name, (handler, schema, supports_resp) in SERVICES.items():
+        hass.services.async_register(
+            DOMAIN,
+            svc_name,
+            functools.partial(_call_if_loaded, handler, hass),
+            schema=schema,
+            supports_response=supports_resp,
+        )
