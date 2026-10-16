@@ -17,15 +17,6 @@ def make_light_model(brightness=50.0, mirek=370, xy=(0.4, 0.4)):
     return model
 
 
-@pytest.fixture(autouse=True)
-def patch_extract_entity_ids():
-    async def _extract(call):
-        return set(call.data.get("entity_id", []))
-
-    with patch("custom_components.hue_dimmer.async_extract_entity_ids", side_effect=_extract):
-        yield
-
-
 @pytest.mark.asyncio
 async def test_response_uses_xy_color_key(mock_hass):
     # Response field names must match set_attributes inputs and HA attribute names (issue #16).
