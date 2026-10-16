@@ -17,7 +17,11 @@ def mock_bridge():
 
 @pytest.fixture
 def mock_hass():
-    return MagicMock()
+    hass = MagicMock()
+    state = MagicMock()
+    state.attributes = {}
+    hass.states.get.return_value = state
+    return hass
 
 
 @pytest.fixture(autouse=True)

@@ -13,13 +13,6 @@ RESOURCE_ID = "abc-123"
 NOW = 1_000_000.0
 
 
-@pytest.fixture(autouse=True)
-def clear_cache():
-    _brightness_cache.clear()
-    yield
-    _brightness_cache.clear()
-
-
 def patch_targets(bridge, resource_type="light"):
     async def _targets(hass, call):
         yield ENTITY_ID, bridge, resource_type, RESOURCE_ID
@@ -27,41 +20,34 @@ def patch_targets(bridge, resource_type="light"):
     return patch("custom_components.hue_dimmer.services._iter_targets", _targets)
 
 
-def make_hass(brightness_255=None):
-    hass = MagicMock()
-    state = MagicMock()
-    state.attributes = {"brightness": brightness_255} if brightness_255 is not None else {}
-    hass.states.get.return_value = state
-    return hass
-
-
 @pytest.mark.asyncio
-async def test_failed_transition_warns_and_leaves_cache_empty(caplog):
+async def test_failed_transition_warns_and_leaves_cache_empty(mock_hass, caplog):
     bridge = MagicMock()
     bridge.api.lights.set_state = AsyncMock(side_effect=Exception("bridge unreachable"))
 
     with patch_targets(bridge), caplog.at_level(logging.WARNING):
-        await _handle_transition(make_hass(), make_service_call({"sweep_time": 5}), DIR_UP, 100.0)
+        await _handle_transition(mock_hass, make_service_call({"sweep_time": 5}), DIR_UP, 100.0)
 
     assert ENTITY_ID not in _brightness_cache
     assert "Transition command failed for light.kitchen" in caplog.text
 
 
 @pytest.mark.asyncio
-async def test_successful_transition_is_cached():
+async def test_successful_transition_is_cached(mock_hass):
     bridge = MagicMock()
     bridge.api.lights.set_state = AsyncMock()
 
     with patch_targets(bridge):
-        await _handle_transition(make_hass(), make_service_call({"sweep_time": 5}), DIR_UP, 100.0)
+        await _handle_transition(mock_hass, make_service_call({"sweep_time": 5}), DIR_UP, 100.0)
 
     assert _brightness_cache[ENTITY_ID]["dir"] == DIR_UP
     assert _brightness_cache[ENTITY_ID]["target"] == 100.0
 
 
 @pytest.mark.asyncio
-async def test_group_get_attributes_predicts_mid_transition():
+async def test_group_get_attributes_predicts_mid_transition(mock_hass):
     # The bridge reports the end value instantly; get_attributes must report the predicted brightness.
+    mock_hass.states.get.return_value.attributes = {"brightness": 255}
     bridge = MagicMock()
     member = MagicMock(color=None, color_temperature=None)
     member.dimming.brightness = 100.0
@@ -72,6 +58,6 @@ async def test_group_get_attributes_predicts_mid_transition():
         patch_targets(bridge, "grouped_light"),
         patch("custom_components.hue_dimmer.transitions.time.time", return_value=NOW + 2),
     ):
-        result = await _handle_get_attributes(make_hass(brightness_255=255), make_service_call({}))
+        result = await _handle_get_attributes(mock_hass, make_service_call({}))
 
     assert result[ENTITY_ID]["brightness"] == 40.0  # 20% + 2s at 10%/s
