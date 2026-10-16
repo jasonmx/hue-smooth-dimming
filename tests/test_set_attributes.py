@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 from homeassistant.util.color import color_hs_to_xy, color_RGB_to_xy
 
-from custom_components.hue_dimmer import _handle_set_attributes
+from custom_components.hue_dimmer.services import _handle_set_attributes
 from tests.conftest import make_entity_state, make_lights, make_service_call
 
 RESOURCE_ID = "abc-123"
@@ -16,7 +16,7 @@ _XY_FROM_RGB = color_RGB_to_xy(255, 128, 0)
 
 def patch_bridge(bridge, resource_type="light"):
     return patch(
-        "custom_components.hue_dimmer.resolve_entity",
+        "custom_components.hue_dimmer.bridge.resolve_entity",
         return_value=(bridge, resource_type, RESOURCE_ID),
     )
 

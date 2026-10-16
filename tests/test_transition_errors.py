@@ -3,8 +3,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from custom_components.hue_dimmer import _brightness_cache, _handle_get_attributes, _handle_transition
 from custom_components.hue_dimmer.const import DIR_UP
+from custom_components.hue_dimmer.services import _handle_get_attributes, _handle_transition
+from custom_components.hue_dimmer.transitions import _brightness_cache
 from tests.conftest import make_service_call
 
 ENTITY_ID = "light.kitchen"
@@ -23,7 +24,7 @@ def patch_targets(bridge, resource_type="light"):
     async def _targets(hass, call):
         yield ENTITY_ID, bridge, resource_type, RESOURCE_ID
 
-    return patch("custom_components.hue_dimmer._iter_targets", _targets)
+    return patch("custom_components.hue_dimmer.services._iter_targets", _targets)
 
 
 def make_hass(brightness_255=None):
@@ -67,7 +68,10 @@ async def test_group_get_attributes_predicts_mid_transition():
     bridge.api.groups.grouped_light.get_lights.return_value = [member]
     _brightness_cache[ENTITY_ID] = {"time": NOW, "bright": 20.0, "target": 100.0, "dir": DIR_UP, "sweep": 10.0}
 
-    with patch_targets(bridge, "grouped_light"), patch("custom_components.hue_dimmer.time.time", return_value=NOW + 2):
+    with (
+        patch_targets(bridge, "grouped_light"),
+        patch("custom_components.hue_dimmer.transitions.time.time", return_value=NOW + 2),
+    ):
         result = await _handle_get_attributes(make_hass(brightness_255=255), make_service_call({}))
 
     assert result[ENTITY_ID]["brightness"] == 40.0  # 20% + 2s at 10%/s

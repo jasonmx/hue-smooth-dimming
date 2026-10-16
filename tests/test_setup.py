@@ -6,14 +6,9 @@ import pytest
 import voluptuous as vol
 from homeassistant.core import SupportsResponse
 
-from custom_components.hue_dimmer import (
-    SCHEMA_RAISE,
-    SCHEMA_SET_ATTRIBUTES,
-    SERVICES,
-    async_setup_entry,
-    async_unload_entry,
-)
+from custom_components.hue_dimmer import async_setup_entry, async_unload_entry
 from custom_components.hue_dimmer.const import SERVICE_GET_ATTRIBUTES
+from custom_components.hue_dimmer.services import SCHEMA_RAISE, SCHEMA_SET_ATTRIBUTES, SERVICES
 
 
 @pytest.mark.asyncio

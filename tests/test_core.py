@@ -7,18 +7,18 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import custom_components.hue_dimmer as hue_mod
-from custom_components.hue_dimmer import (
-    _handle_set_attributes,
-    _handle_stop,
-    _handle_transition,
-    resolve_brightness,
-)
+import custom_components.hue_dimmer.transitions as hue_mod
 from custom_components.hue_dimmer.const import (
     DIR_DOWN,
     DIR_NONE,
     DIR_UP,
 )
+from custom_components.hue_dimmer.services import (
+    _handle_set_attributes,
+    _handle_stop,
+    _handle_transition,
+)
+from custom_components.hue_dimmer.transitions import resolve_brightness
 from tests.conftest import make_service_call
 
 ENTITY_ID = "light.test_light"
@@ -36,7 +36,7 @@ def _hass_with_brightness(pct):
 
 def _patch_resolve(bridge, resource_type="light"):
     return patch(
-        "custom_components.hue_dimmer.resolve_entity",
+        "custom_components.hue_dimmer.bridge.resolve_entity",
         return_value=(bridge, resource_type, RESOURCE_ID),
     )
 
@@ -62,7 +62,7 @@ def test_resolve_brightness_moving_up_extrapolates():
         "sweep": 10.0,
     }
     # elapsed=5 → change = (100/10)*5 = 50% → predicted = 30+50 = 80%
-    with patch("custom_components.hue_dimmer.time.time", return_value=t_start + 5.0):
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 5.0):
         result = resolve_brightness(hass, ENTITY_ID)
     assert result == pytest.approx(80.0, abs=0.1)
 
@@ -78,7 +78,7 @@ def test_resolve_brightness_moving_down_extrapolates():
         "sweep": 10.0,
     }
     # elapsed=5 → change = (100/10)*5 = 50% → predicted = 70-50 = 20%
-    with patch("custom_components.hue_dimmer.time.time", return_value=t_start + 5.0):
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 5.0):
         result = resolve_brightness(hass, ENTITY_ID)
     assert result == pytest.approx(20.0, abs=0.1)
 
@@ -94,7 +94,7 @@ def test_resolve_brightness_moving_up_capped_at_target():
         "sweep": 5.0,
     }
     # elapsed=10 → change = (100/5)*10 = 200% → capped at target 100%
-    with patch("custom_components.hue_dimmer.time.time", return_value=t_start + 10.0):
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 10.0):
         result = resolve_brightness(hass, ENTITY_ID)
     assert result == pytest.approx(100.0, abs=0.1)
 
@@ -111,7 +111,7 @@ def test_resolve_brightness_stopped_within_guard_returns_cached():
         "sweep": 1.0,
     }
     # guard = API_SETTLE_SECONDS; at t+5 guard still active
-    with patch("custom_components.hue_dimmer.time.time", return_value=t_start + 5.0):
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 5.0):
         result = resolve_brightness(hass, ENTITY_ID)
     assert result == pytest.approx(cached_bright, abs=0.1)
 
@@ -128,7 +128,7 @@ def test_resolve_brightness_guard_expired_moving_prunes_and_returns_reported():
         "sweep": sweep,
     }
     # guard = sweep + API_SETTLE_SECONDS = 5 + 15 = 20s; at t+21 guard expired
-    with patch("custom_components.hue_dimmer.time.time", return_value=t_start + 21.0):
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 21.0):
         result = resolve_brightness(hass, ENTITY_ID)
     assert result == pytest.approx(70.0, abs=0.1)
     assert ENTITY_ID not in hue_mod._brightness_cache
@@ -145,7 +145,7 @@ def test_resolve_brightness_guard_expired_stopped_prunes_and_returns_reported():
         "sweep": 1.0,
     }
     # guard = API_SETTLE_SECONDS only (no sweep for stopped) = 15s; at t+16 expired
-    with patch("custom_components.hue_dimmer.time.time", return_value=t_start + 16.0):
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 16.0):
         result = resolve_brightness(hass, ENTITY_ID)
     assert result == pytest.approx(70.0, abs=0.1)
     assert ENTITY_ID not in hue_mod._brightness_cache
@@ -232,7 +232,7 @@ async def test_handle_stop_caches_stopped_entry_at_current_brightness(mock_bridg
     call = make_service_call({"entity_id": [ENTITY_ID]})
     t_now = 1000.0
     with _patch_resolve(mock_bridge):
-        with patch("custom_components.hue_dimmer.time.time", return_value=t_now):
+        with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_now):
             await _handle_stop(hass, call)
     cached = hue_mod._brightness_cache.get(ENTITY_ID)
     assert cached is not None
