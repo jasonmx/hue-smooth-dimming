@@ -68,38 +68,55 @@ buttons_released:
 
 ---
 
-### Set While Off
+### Set Scene, Brightness, Color & Color Temperature While Light Is Off
 
 Lets you set brightness, color, CT and scenes while lights are off, so that they turn on consistently how you want them without unwanted brightness or color flashes.
 
-#### Set Brightness, Color & Color Temperature
-
 | Action | Description |
 | :--- | :--- |
+| `hue_dimmer.set_scene` | Set a Hue scene's brightness, color and color temp on its lights without turning them on |
 | `hue_dimmer.set_attributes` | Set brightness, color temp or color without changing on/off state |
+| `hue_dimmer.get_attributes` | Get brightness, color temp and color (RGB, HS, XY). Returns one record per target |
 
-| Field | Description |
-| :--- | :--- |
-| `target` | Hue lights and groups (required) |
-| `brightness` | Brightness level (%) |
-| `min_brightness` | Enforce a minimum brightness (%) |
-| `max_brightness` | Enforce a maximum brightness (%) |
-| `color_temp_kelvin` | Color temperature (K) |
-| `rgb_color` | Color as `[red, green, blue]` (0–255 each) |
-| `hs_color` | Color as `[hue, saturation]` (0–360, 0–100) |
-| `xy_color` | Color as `[x, y]` |
+| Field | Actions | Description |
+| :--- | :--- | :--- |
+| `target` | set_scene | Hue scenes (required) |
+| `target` | set_attributes, get_attributes | Hue lights and groups (required) |
+| `brightness` | set_attributes | Brightness level (%) |
+| `min_brightness` | set_attributes | Enforce a minimum brightness (%) |
+| `max_brightness` | set_attributes | Enforce a maximum brightness (%) |
+| `color_temp_kelvin` | set_attributes | Color temperature (K) |
+| `rgb_color` | set_attributes | Color as `[red, green, blue]` (0–255 each) |
+| `hs_color` | set_attributes | Color as `[hue, saturation]` (0–360, 0–100) |
+| `xy_color` | set_attributes | Color as `[x, y]` |
 
-##### Get Attributes
+With `set_scene`, lights come on in the scene the next time they're turned on. Good to know:
 
-| Action | Description |
-| :--- | :--- |
-| `hue_dimmer.get_attributes` | Get brightness, color temp and color (RGB, HS, XY) |
+* Lights that are already on change to the scene straight away.
+* Lights the scene turns off are turned off.
+* Static scenes only. All-Day (smart) scenes aren't supported yet.
+* Dynamic scenes are set to their first colors and don't animate.
 
-Reads a light's real values even when it's off, or during or just after a transition (when HA's reported brightness is briefly wrong). Returns one record per target. The only field is `target` (Hue lights and groups, required).
+`get_attributes` reads a light's real values even when it's off, or during or just after a transition (when HA's reported brightness is briefly wrong).
 
-> **Breaking change:** the `get_attributes` response field `color_xy` is renamed to `xy_color`, for naming consistency with Home Assistant. Replace `color_xy` with `xy_color` in your automations.
+#### Automation Examples
 
-##### GUI Automation Example: When lights turn off for an hour, set brightness for next turn-on
+##### YAML Example: Set Scene for Next Turn-On
+
+```yaml
+description: Stage the Relax scene in the living room at 22:00.
+triggers:
+  - trigger: time
+    at: "22:00:00"
+actions:
+  - action: hue_dimmer.set_scene
+    target:
+      entity_id: scene.living_room_relax
+```
+
+##### GUI Example: Set Next Turn-On Brightness
+
+When lights turn off for an hour, set brightness for next turn-on.
 
 ![Set turn-on behavior](examples/update-lights-after-turn-off--step-2.png)
 
@@ -142,37 +159,9 @@ max: 10
 
 If you add more than 10 lights, increase "max: 10" accordingly.
 
-#### Set a Scene
-
-| Action | Description |
-| :--- | :--- |
-| `hue_dimmer.set_scene` | Set a Hue scene's brightness, color and color temp on its lights without turning them on |
-
-| Field | Description |
-| :--- | :--- |
-| `target` | Hue scenes (required) |
-
-Lights come on in the scene the next time they're turned on. Good to know:
-
-* Lights that are already on change to the scene straight away.
-* Lights the scene turns off are turned off.
-* Static scenes only. All-Day (smart) scenes aren't supported yet.
-* Dynamic scenes are set to their first colors and don't animate.
-
-```yaml
-description: Stage the Relax scene in the living room at 22:00.
-triggers:
-  - trigger: time
-    at: "22:00:00"
-actions:
-  - action: hue_dimmer.set_scene
-    target:
-      entity_id: scene.living_room_relax
-```
-
 ***
 
-## Known Limitations
+## Known Limitation
 
 **Brightness reports the end value during a transition.** When a raise or lower starts, the Hue bridge reports the target brightness straight away (for example 100%), then checks the light's real brightness about 10 seconds later. During that window, dashboards, switch indicators and automations that read brightness see the end value, not the light's actual level.
 
