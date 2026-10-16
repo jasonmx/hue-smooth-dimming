@@ -1,9 +1,12 @@
+import functools
 import logging
 import time
 from statistics import mean
 
+import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.service import async_extract_entity_ids
 from homeassistant.util.color import color_hs_to_xy, color_RGB_to_xy, color_xy_to_hs, color_xy_to_RGB
@@ -31,6 +34,59 @@ _LOGGER = logging.getLogger(__name__)
 # Moving:  { entity_id: { "time": float, "bright": float, "target": float, "dir": DIR_UP/DIR_DOWN, "sweep": float } }
 # Stopped: { entity_id: { "time": float, "bright": float, "dir": DIR_NONE } }
 _brightness_cache = {}
+
+
+# ---------------------------------------------------------------------------
+# Voluptuous validators (shape-only for color tuples)
+# ---------------------------------------------------------------------------
+
+
+def _rgb_color(val):
+    if not isinstance(val, (list, tuple)) or len(val) != 3:
+        raise vol.Invalid("rgb_color must be a list of 3 values")
+    return list(val)
+
+
+def _two_item_list(val):
+    if not isinstance(val, (list, tuple)) or len(val) != 2:
+        raise vol.Invalid("must be a list of 2 values")
+    return list(val)
+
+
+# ---------------------------------------------------------------------------
+# Service schemas
+# ---------------------------------------------------------------------------
+
+SCHEMA_RAISE = cv.make_entity_service_schema(
+    {
+        vol.Optional("sweep_time"): vol.Coerce(float),
+        vol.Optional("limit"): vol.Coerce(float),
+    }
+)
+
+SCHEMA_LOWER = cv.make_entity_service_schema(
+    {
+        vol.Optional("sweep_time"): vol.Coerce(float),
+        vol.Optional("limit"): vol.Coerce(float),
+    }
+)
+
+SCHEMA_STOP = cv.make_entity_service_schema({})
+
+SCHEMA_SET_ATTRIBUTES = cv.make_entity_service_schema(
+    {
+        vol.Optional("brightness"): vol.Coerce(float),
+        # 0 is accepted; handlers treat it as "not set" via _positive_or_none
+        vol.Optional("min_brightness"): vol.Coerce(float),
+        vol.Optional("max_brightness"): vol.Coerce(float),
+        vol.Optional("color_temp_kelvin"): vol.Coerce(float),
+        vol.Optional("rgb_color"): _rgb_color,
+        vol.Optional("hs_color"): _two_item_list,
+        vol.Optional("xy_color"): _two_item_list,
+    }
+)
+
+SCHEMA_GET_ATTRIBUTES = cv.make_entity_service_schema({})
 
 
 def _state_attributes(hass: HomeAssistant, entity_id: str):
@@ -371,36 +427,36 @@ async def _handle_get_attributes(hass: HomeAssistant, call: ServiceCall) -> Serv
     return result
 
 
+# ---------------------------------------------------------------------------
+# Module-level handler partials (direction/limit bound; hass bound in setup)
+# ---------------------------------------------------------------------------
+
+_raise_handler = functools.partial(_handle_transition, direction=DIR_UP, default_limit=DEFAULT_MAX_BRIGHTNESS)
+_lower_handler = functools.partial(_handle_transition, direction=DIR_DOWN, default_limit=DEFAULT_MIN_BRIGHTNESS)
+
+# Table: service_name -> (handler, schema, supports_response)
+SERVICES: dict = {
+    SERVICE_RAISE: (_raise_handler, SCHEMA_RAISE, SupportsResponse.NONE),
+    SERVICE_LOWER: (_lower_handler, SCHEMA_LOWER, SupportsResponse.NONE),
+    SERVICE_STOP: (_handle_stop, SCHEMA_STOP, SupportsResponse.NONE),
+    SERVICE_SET_ATTRIBUTES: (_handle_set_attributes, SCHEMA_SET_ATTRIBUTES, SupportsResponse.NONE),
+    SERVICE_GET_ATTRIBUTES: (_handle_get_attributes, SCHEMA_GET_ATTRIBUTES, SupportsResponse.ONLY),
+}
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    # Register services for the Hue Smooth Dimmer.
-
-    async def handle_raise(call: ServiceCall):
-        await _handle_transition(hass, call, DIR_UP, DEFAULT_MAX_BRIGHTNESS)
-
-    async def handle_lower(call: ServiceCall):
-        await _handle_transition(hass, call, DIR_DOWN, DEFAULT_MIN_BRIGHTNESS)
-
-    async def handle_stop(call: ServiceCall):
-        await _handle_stop(hass, call)
-
-    async def handle_set_attributes(call: ServiceCall):
-        await _handle_set_attributes(hass, call)
-
-    async def handle_get_attributes(call: ServiceCall) -> ServiceResponse:
-        return await _handle_get_attributes(hass, call)
-
-    hass.services.async_register(DOMAIN, SERVICE_RAISE, handle_raise)
-    hass.services.async_register(DOMAIN, SERVICE_LOWER, handle_lower)
-    hass.services.async_register(DOMAIN, SERVICE_STOP, handle_stop)
-    hass.services.async_register(DOMAIN, SERVICE_SET_ATTRIBUTES, handle_set_attributes)
-    hass.services.async_register(
-        DOMAIN, SERVICE_GET_ATTRIBUTES, handle_get_attributes, supports_response=SupportsResponse.ONLY
-    )
-
+    for svc_name, (handler, schema, supports_resp) in SERVICES.items():
+        hass.services.async_register(
+            DOMAIN,
+            svc_name,
+            functools.partial(handler, hass),
+            schema=schema,
+            supports_response=supports_resp,
+        )
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    for svc in [SERVICE_RAISE, SERVICE_LOWER, SERVICE_STOP, SERVICE_SET_ATTRIBUTES, SERVICE_GET_ATTRIBUTES]:
-        hass.services.async_remove(DOMAIN, svc)
+    for svc_name in SERVICES:
+        hass.services.async_remove(DOMAIN, svc_name)
     return True
