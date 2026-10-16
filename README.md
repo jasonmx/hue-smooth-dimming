@@ -76,9 +76,7 @@ Lets you set scenes, brightness, color and CT while lights are off, so that they
 | :--- | :--- |
 | `hue_dimmer.set_scene` | Set a Hue scene without turning lights on |
 | `hue_dimmer.set_attributes` | Set brightness, color temp or color without changing on/off state |
-| `hue_dimmer.get_attributes` | Get brightness, color temp and color (RGB, HS, XY). Returns one record per target |
-
-`get_attributes` reports a light's real values when it's off and during brightness transitions, when HA's reported values are wrong.
+| `hue_dimmer.get_attributes` | Reports a light's real brightness, color temp and color (RGB, HS, XY), even when the light is off or changing brightness (which HA can't do). Returns one record per target |
 
 | Field | Actions | Description |
 | :--- | :--- | :--- |
