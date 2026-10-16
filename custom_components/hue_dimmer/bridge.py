@@ -18,8 +18,8 @@ def _mirek_kelvin(value):
     return round(1_000_000 / value)
 
 
-def resolve_entity(hass: HomeAssistant, entity_id: str):
-    # Retrieves the Hue Bridge instance and Resource UUID, ensuring it supports V2 API.
+def _resolve_bridge(hass: HomeAssistant, entity_id: str):
+    # Retrieves the Hue Bridge instance and resource UUID, ensuring it supports V2 API.
     from homeassistant.components.hue.const import DOMAIN as HUE_DOMAIN
 
     ent_reg = er.async_get(hass)
@@ -27,28 +27,37 @@ def resolve_entity(hass: HomeAssistant, entity_id: str):
 
     if not entry:
         _LOGGER.error("Entity %s not found in entity registry.", entity_id)
-        return None, None, None
+        return None, None
 
     config_entry = hass.config_entries.async_get_entry(entry.config_entry_id)
     if not config_entry or config_entry.domain != HUE_DOMAIN:
         _LOGGER.error("Entity %s is not a Philips Hue entity.", entity_id)
-        return None, None, None
+        return None, None
 
     bridge = getattr(config_entry, "runtime_data", None)
 
     if not bridge:
         _LOGGER.error("Hue bridge runtime_data not found for %s", entity_id)
-        return None, None, None
+        return None, None
 
     # V2 Bridge Check
     if getattr(bridge, "api_version", 1) < 2:
         _LOGGER.error("Hue Smooth Dimmer requires a Bridge V2 or Bridge Pro for %s", entity_id)
-        return None, None, None
+        return None, None
 
     resource_id = entry.unique_id
 
     if ":" in resource_id:
         resource_id = resource_id.split(":")[-1]
+
+    return bridge, resource_id
+
+
+def resolve_entity(hass: HomeAssistant, entity_id: str):
+    # Adds the resource type (light or grouped_light) to the bridge lookup.
+    bridge, resource_id = _resolve_bridge(hass, entity_id)
+    if not bridge:
+        return None, None, None
 
     is_group = bool(_state_attributes(hass, entity_id).get("is_hue_group"))
     resource_type = "grouped_light" if is_group else "light"
@@ -64,6 +73,16 @@ async def _iter_targets(hass: HomeAssistant, call: ServiceCall):
         bridge, resource_type, resource_id = resolve_entity(hass, entity_id)
         if bridge and resource_id:
             yield entity_id, bridge, resource_type, resource_id
+
+
+async def _iter_scene_targets(hass: HomeAssistant, call: ServiceCall):
+    # Yields (entity_id, bridge, scene_id) for each targeted Hue scene.
+    for entity_id in await async_extract_entity_ids(call):
+        if not entity_id.startswith("scene."):
+            continue
+        bridge, scene_id = _resolve_bridge(hass, entity_id)
+        if bridge and scene_id:
+            yield entity_id, bridge, scene_id
 
 
 def _get_controller(bridge, resource_type):
@@ -103,12 +122,21 @@ async def _send_set_attributes(bridge, resource_type, resource_id, brightness, c
         light_ids = [resource_id]
 
     for light_id in light_ids:
-        try:
-            await bridge.api.lights.set_state(
-                light_id,
-                brightness=float(brightness) if brightness is not None else None,
-                color_temp=color_temp_mirek,
-                color_xy=color_xy,
-            )
-        except Exception as exc:
-            _LOGGER.error("set_attributes failed for light %s: %s", light_id, exc)
+        await _write_light(
+            bridge,
+            light_id,
+            brightness=float(brightness) if brightness is not None else None,
+            color_temp_mirek=color_temp_mirek,
+            color_xy=color_xy,
+        )
+
+
+async def _write_light(bridge, light_id, *, on=None, brightness=None, color_temp_mirek=None, color_xy=None):
+    # One light write; failures are logged so the caller can carry on with the next light.
+    kwargs = {"brightness": brightness, "color_temp": color_temp_mirek, "color_xy": color_xy}
+    if on is not None:
+        kwargs["on"] = on
+    try:
+        await bridge.api.lights.set_state(light_id, **kwargs)
+    except Exception as exc:
+        _LOGGER.error("Write failed for light %s: %s", light_id, exc)
