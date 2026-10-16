@@ -3,7 +3,7 @@
 [![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/philips-hue-smooth-dimmer?sort=date)](https://github.com/jasonmx/philips-hue-smooth-dimmer/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
 This integration extends the core Philips Hue integration and lets you:
-* **Smooth Dimming:** use third-party buttons to dim your Hue lights smoothly.
+* **Dim Smoothly:** use third-party buttons. Hold to dim ans release to stop. 
 * **Set Lights While Off:** set scenes, brightness, color and color temperature without turning the lights on.
 
 ## How It Helps You 🔅💡🔆
@@ -17,7 +17,7 @@ This integration extends the core Philips Hue integration and lets you:
 ### Requirements
 * Philips Hue Bridge V2 or Pro (V3)
 * **[Philips Hue integration](https://www.home-assistant.io/integrations/hue)** set up and connected to that bridge
-* Not supported: Hue bulbs paired directly to Zigbee2MQTT, ZHA or deCONZ without a bridge
+* Not supported: Hue bulbs paired to Zigbee2MQTT, ZHA or deCONZ without a Hue bridge
 
 ### Install from HACS
 1. Open the Hue Smooth Dimmer HACS repository
