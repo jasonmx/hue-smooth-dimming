@@ -152,7 +152,7 @@ If you add more than 10 lights, increase "max: 10" accordingly.
 
 ## Known Limitation
 
-When a raise or lower action starts, the Hue bridge reports the target brightness straight away (e.g. 100%), then corrects itself with the light's actual brightness about 10 seconds later. During that window, HA publishes the target brightness to dashboards, switch indicators and automations, not the light's actual brightness.
+When a raise or lower action starts, the Hue bridge reports the target brightness straight away (e.g. 100%), then corrects itself with the light's actual brightness about 10 seconds later. During that window, HA publishes the target brightness to dashboards, switch indicators and automations.
 
 If an automation needs to know a light's real brightness during or shortly after a dimming transition, read it with `hue_dimmer.get_attributes`.
 
