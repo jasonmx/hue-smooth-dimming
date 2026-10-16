@@ -23,3 +23,20 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q tests/
+
+  smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: "pip"
+
+      - name: Install smoke-test dependencies
+        run: pip install -r requirements_test_smoke.txt
+
+      - name: Run smoke tests
+        run: python -m pytest -q tests/test_smoke.py
