@@ -51,104 +51,50 @@ def test_resolve_brightness_no_cache():
     assert result == pytest.approx(60.0, abs=0.1)
 
 
-def test_resolve_brightness_moving_up_extrapolates():
-    hass = _hass_with_brightness(80.0)  # reported value — should be ignored
+@pytest.mark.parametrize("cache_entry, elapsed, ha_brightness, expected, pruned", [
+    pytest.param(
+        {"bright": 30.0, "target": 100.0, "dir": DIR_UP, "sweep": 10.0},
+        5.0, 80.0, 80.0, False,
+        id="moving_up_extrapolates",
+    ),
+    pytest.param(
+        {"bright": 70.0, "target": 20.0, "dir": DIR_DOWN, "sweep": 10.0},
+        5.0, 20.0, 20.0, False,
+        id="moving_down_extrapolates",
+    ),
+    pytest.param(
+        {"bright": 90.0, "target": 100.0, "dir": DIR_UP, "sweep": 5.0},
+        10.0, 80.0, 100.0, False,
+        id="moving_up_capped_at_target",
+    ),
+    pytest.param(
+        {"bright": 42.0, "target": 42.0, "dir": DIR_NONE, "sweep": 1.0},
+        5.0, 80.0, 42.0, False,
+        id="stopped_within_guard",
+    ),
+    pytest.param(
+        {"bright": 30.0, "target": 100.0, "dir": DIR_UP, "sweep": 5.0},
+        21.0, 70.0, 70.0, True,
+        id="guard_expired_moving_prunes_and_returns_reported",
+    ),
+    pytest.param(
+        {"bright": 42.0, "target": 42.0, "dir": DIR_NONE, "sweep": 1.0},
+        16.0, 70.0, 70.0, True,
+        id="guard_expired_stopped_prunes_and_returns_reported",
+    ),
+])
+def test_resolve_brightness_with_cache(cache_entry, elapsed, ha_brightness, expected, pruned):
     t_start = 1000.0
-    hue_mod._brightness_cache[ENTITY_ID] = {
-        "time": t_start,
-        "bright": 30.0,
-        "target": 100.0,
-        "dir": DIR_UP,
-        "sweep": 10.0,
-    }
-    # elapsed=5 → change = (100/10)*5 = 50% → predicted = 30+50 = 80%
-    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 5.0):
+    cache_entry["time"] = t_start
+    hue_mod._brightness_cache[ENTITY_ID] = cache_entry
+    hass = _hass_with_brightness(ha_brightness)
+    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + elapsed):
         result = resolve_brightness(hass, ENTITY_ID)
-    assert result == pytest.approx(80.0, abs=0.1)
-
-
-def test_resolve_brightness_moving_down_extrapolates():
-    hass = _hass_with_brightness(20.0)
-    t_start = 1000.0
-    hue_mod._brightness_cache[ENTITY_ID] = {
-        "time": t_start,
-        "bright": 70.0,
-        "target": 20.0,
-        "dir": DIR_DOWN,
-        "sweep": 10.0,
-    }
-    # elapsed=5 → change = (100/10)*5 = 50% → predicted = 70-50 = 20%
-    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 5.0):
-        result = resolve_brightness(hass, ENTITY_ID)
-    assert result == pytest.approx(20.0, abs=0.1)
-
-
-def test_resolve_brightness_moving_up_capped_at_target():
-    hass = _hass_with_brightness(80.0)
-    t_start = 1000.0
-    hue_mod._brightness_cache[ENTITY_ID] = {
-        "time": t_start,
-        "bright": 90.0,
-        "target": 100.0,
-        "dir": DIR_UP,
-        "sweep": 5.0,
-    }
-    # elapsed=10 → change = (100/5)*10 = 200% → capped at target 100%
-    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 10.0):
-        result = resolve_brightness(hass, ENTITY_ID)
-    assert result == pytest.approx(100.0, abs=0.1)
-
-
-def test_resolve_brightness_stopped_within_guard_returns_cached():
-    hass = _hass_with_brightness(80.0)  # reported value — should be ignored
-    t_start = 1000.0
-    cached_bright = 42.0
-    hue_mod._brightness_cache[ENTITY_ID] = {
-        "time": t_start,
-        "bright": cached_bright,
-        "target": cached_bright,
-        "dir": DIR_NONE,
-        "sweep": 1.0,
-    }
-    # guard = API_SETTLE_SECONDS; at t+5 guard still active
-    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 5.0):
-        result = resolve_brightness(hass, ENTITY_ID)
-    assert result == pytest.approx(cached_bright, abs=0.1)
-
-
-def test_resolve_brightness_guard_expired_moving_prunes_and_returns_reported():
-    hass = _hass_with_brightness(70.0)
-    t_start = 1000.0
-    sweep = 5.0
-    hue_mod._brightness_cache[ENTITY_ID] = {
-        "time": t_start,
-        "bright": 30.0,
-        "target": 100.0,
-        "dir": DIR_UP,
-        "sweep": sweep,
-    }
-    # guard = sweep + API_SETTLE_SECONDS = 5 + 15 = 20s; at t+21 guard expired
-    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 21.0):
-        result = resolve_brightness(hass, ENTITY_ID)
-    assert result == pytest.approx(70.0, abs=0.1)
-    assert ENTITY_ID not in hue_mod._brightness_cache
-
-
-def test_resolve_brightness_guard_expired_stopped_prunes_and_returns_reported():
-    hass = _hass_with_brightness(70.0)
-    t_start = 1000.0
-    hue_mod._brightness_cache[ENTITY_ID] = {
-        "time": t_start,
-        "bright": 42.0,
-        "target": 42.0,
-        "dir": DIR_NONE,
-        "sweep": 1.0,
-    }
-    # guard = API_SETTLE_SECONDS only (no sweep for stopped) = 15s; at t+16 expired
-    with patch("custom_components.hue_dimmer.transitions.time.time", return_value=t_start + 16.0):
-        result = resolve_brightness(hass, ENTITY_ID)
-    assert result == pytest.approx(70.0, abs=0.1)
-    assert ENTITY_ID not in hue_mod._brightness_cache
+    assert result == pytest.approx(expected, abs=0.1)
+    if pruned:
+        assert ENTITY_ID not in hue_mod._brightness_cache
+    else:
+        assert ENTITY_ID in hue_mod._brightness_cache
 
 
 # ---------------------------------------------------------------------------
@@ -176,31 +122,18 @@ async def test_handle_transition_no_command_when_distance_below_04(mock_bridge):
     mock_bridge.api.lights.set_state.assert_not_called()
 
 
+@pytest.mark.parametrize("direction, limit, expected_on", [
+    pytest.param(DIR_UP, 100.0, True, id="raise_sends_on_true"),
+    pytest.param(DIR_DOWN, 0.0, False, id="lower_to_zero_sends_on_false"),
+    pytest.param(DIR_DOWN, 20.0, None, id="lower_to_positive_sends_on_none"),
+])
 @pytest.mark.asyncio
-async def test_handle_transition_raise_sends_on_true(mock_bridge):
+async def test_handle_transition_on_flag(mock_bridge, direction, limit, expected_on):
     hass = _hass_with_brightness(50.0)
-    call = make_service_call({"entity_id": [ENTITY_ID]})
+    call = make_service_call({"entity_id": [ENTITY_ID], "limit": limit})
     with _patch_resolve(mock_bridge):
-        await _handle_transition(hass, call, DIR_UP, 100.0)
-    assert mock_bridge.api.lights.set_state.call_args.kwargs["on"] is True
-
-
-@pytest.mark.asyncio
-async def test_handle_transition_lower_to_zero_sends_on_false(mock_bridge):
-    hass = _hass_with_brightness(50.0)
-    call = make_service_call({"entity_id": [ENTITY_ID], "limit": 0.0})
-    with _patch_resolve(mock_bridge):
-        await _handle_transition(hass, call, DIR_DOWN, 0.0)
-    assert mock_bridge.api.lights.set_state.call_args.kwargs["on"] is False
-
-
-@pytest.mark.asyncio
-async def test_handle_transition_lower_to_positive_sends_on_none(mock_bridge):
-    hass = _hass_with_brightness(80.0)
-    call = make_service_call({"entity_id": [ENTITY_ID], "limit": 20.0})
-    with _patch_resolve(mock_bridge):
-        await _handle_transition(hass, call, DIR_DOWN, 20.0)
-    assert mock_bridge.api.lights.set_state.call_args.kwargs["on"] is None
+        await _handle_transition(hass, call, direction, limit)
+    assert mock_bridge.api.lights.set_state.call_args.kwargs["on"] is expected_on
 
 
 @pytest.mark.asyncio
