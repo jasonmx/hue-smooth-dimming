@@ -1,10 +1,10 @@
 # Release checklist
 
 Run this on a live Home Assistant install with a real Hue bridge **before tagging any release or
-release candidate**. It covers what CI can't: the bridge's actual transition and reporting behaviour.
+release candidate**. It covers what CI can't: the bridge's actual transition and reporting behavior.
 
 Takes about ten minutes. Run the actions from **Developer Tools → Actions** in YAML mode. Replace
-`light.test_lamp` with a dimmable, colour-capable Hue light and `light.test_room` with a Hue room or
+`light.test_lamp` with a dimmable, color-capable Hue light and `light.test_room` with a Hue room or
 zone that has at least two lights.
 
 Keep **Settings → System → Logs** open, filtered on `hue_dimmer`.
@@ -37,7 +37,7 @@ Keep **Settings → System → Logs** open, filtered on `hue_dimmer`.
       the bottom. It doesn't jump to its previous brightness first.
 4. [ ] **Lower to a limit.** From 100%, `hue_dimmer.lower` with `data: { limit: 30 }`. Stops at 30%
       and stays on.
-5. [ ] **Dim, stop, dim** (the core behaviour). `raise` with `sweep_time: 10` from 10%. After about
+5. [ ] **Dim, stop, dim** (the core behavior). `raise` with `sweep_time: 10` from 10%. After about
       3 seconds call `hue_dimmer.stop`. Within 5 seconds call `raise` again. The light holds where
       it stopped, then continues **from that point**. It doesn't jump to 100% or back down. Repeat
       with `lower`.

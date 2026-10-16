@@ -1,9 +1,9 @@
 {
-  "title": "Philips Hue Smooth Dimmer",
+  "title": "Hue Smooth Dimmer",
   "config": {
     "step": {
       "user": {
-        "title": "Philips Hue Smooth Dimmer",
+        "title": "Hue Smooth Dimmer",
         "description": "Click submit to install."
       }
     },
