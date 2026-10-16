@@ -133,6 +133,34 @@ max: 10
 
 If you add more than 10 lights, increase "max: 10" accordingly.
 
+#### Set a Scene Without Turning Lights On
+
+| Action | Description |
+| :--- | :--- |
+| `hue_dimmer.set_scene` | Set a Hue scene's brightness, color and color temp on its lights without turning them on |
+
+| Field | Description |
+| :--- | :--- |
+| `target` | Hue scenes (required) |
+
+Lights come on in the scene the next time they're turned on. Good to know:
+
+* Lights that are already on change to the scene straight away.
+* Lights the scene turns off are turned off.
+* Static scenes only. All-Day (smart) scenes aren't supported yet.
+* Dynamic scenes are set to their first colors and don't animate.
+
+```yaml
+description: Stage the Relax scene in the living room at 22:00.
+triggers:
+  - trigger: time
+    at: "22:00:00"
+actions:
+  - action: hue_dimmer.set_scene
+    target:
+      entity_id: scene.living_room_relax
+```
+
 ***
 
 ## Uninstall

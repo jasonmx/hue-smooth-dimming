@@ -165,3 +165,11 @@ get_attributes:
     entity:
       domain: light
       integration: hue
+
+set_scene:
+  name: Set scene
+  description: Set a Hue scene's brightness, color and color temp on its lights without turning them on.
+  target:
+    entity:
+      domain: scene
+      integration: hue

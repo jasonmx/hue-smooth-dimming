@@ -14,7 +14,7 @@ from .attributes import (
     _resolve_color_temp,
     _resolve_color_xy,
 )
-from .bridge import _get_cached_attributes, _iter_targets, _send_set_attributes
+from .bridge import _get_cached_attributes, _iter_scene_targets, _iter_targets, _send_set_attributes
 from .const import (
     DEFAULT_MAX_BRIGHTNESS,
     DEFAULT_MIN_BRIGHTNESS,
@@ -26,8 +26,10 @@ from .const import (
     SERVICE_LOWER,
     SERVICE_RAISE,
     SERVICE_SET_ATTRIBUTES,
+    SERVICE_SET_SCENE,
     SERVICE_STOP,
 )
+from .scenes import _apply_scene
 from .transitions import _start_transition, _stop_transition
 
 _LOGGER = logging.getLogger(__name__)
@@ -84,6 +86,8 @@ SCHEMA_SET_ATTRIBUTES = cv.make_entity_service_schema(
 )
 
 SCHEMA_GET_ATTRIBUTES = cv.make_entity_service_schema({})
+
+SCHEMA_SET_SCENE = cv.make_entity_service_schema({})
 
 
 # ---------------------------------------------------------------------------
@@ -157,6 +161,11 @@ async def _handle_get_attributes(hass: HomeAssistant, call: ServiceCall) -> Serv
     return result
 
 
+async def _handle_set_scene(hass: HomeAssistant, call: ServiceCall):
+    async for entity_id, bridge, scene_id in _iter_scene_targets(hass, call):
+        await _apply_scene(bridge, entity_id, scene_id)
+
+
 # ---------------------------------------------------------------------------
 # Module-level handler partials (direction/limit bound; hass bound in setup)
 # ---------------------------------------------------------------------------
@@ -171,6 +180,7 @@ SERVICES: dict = {
     SERVICE_STOP: (_handle_stop, SCHEMA_STOP, SupportsResponse.NONE),
     SERVICE_SET_ATTRIBUTES: (_handle_set_attributes, SCHEMA_SET_ATTRIBUTES, SupportsResponse.NONE),
     SERVICE_GET_ATTRIBUTES: (_handle_get_attributes, SCHEMA_GET_ATTRIBUTES, SupportsResponse.ONLY),
+    SERVICE_SET_SCENE: (_handle_set_scene, SCHEMA_SET_SCENE, SupportsResponse.NONE),
 }
 
 
