@@ -78,7 +78,7 @@ settings first by repeating step 3.1.
 
 ## 5. Set scene
 
-Use `light.test_room` and two of its static scenes with clearly different colours, here
+Use `light.test_room` and two of its static scenes with clearly different colors, here
 `scene.test_room_a` and `scene.test_room_b`.
 
 1. [ ] Recall A, turn the room off, then:
@@ -87,16 +87,16 @@ Use `light.test_room` and two of its static scenes with clearly different colour
    target: { entity_id: scene.test_room_b }
    ```
    The room **stays off**. Turn it on with a plain `light.turn_on`: every light comes on in B's
-   colours and brightness.
+   colors and brightness.
 2. [ ] With the room **on** in A, `set_scene` B. The lights change to B straight away and stay on.
-3. [ ] **No stale snapshot.** Edit B in the Hue app (change one light's colour), turn the room off,
-      `set_scene` B, turn it on. The edited colour is used.
+3. [ ] **No stale snapshot.** Edit B in the Hue app (change one light's color), turn the room off,
+      `set_scene` B, turn it on. The edited color is used.
 4. [ ] **Off in scene.** Use a scene where one light is off. With the room on, `set_scene` it: that
       light turns off and the others change.
 5. [ ] **All-Day scene.** Target an All-Day scene. Nothing changes, and the log shows the
       "doesn't support All-Day (smart) scenes yet" warning.
 6. [ ] **Dynamic scene.** Room off, `set_scene` a dynamic scene, turn on. The lights come on in its
-      first colours and don't animate.
+      first colors and don't animate.
 7. [ ] **Large room.** On a room or zone with 10+ lights, every light updates and the log has no 429
       errors.
 8. [ ] (Two bridges only) A scene on the second bridge works.
