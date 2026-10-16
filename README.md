@@ -6,7 +6,7 @@ Smooth, continuous dimming for Philips Hue lights in Home Assistant. Plus: set b
 
 This integration extends the core Philips Hue integration and lets you:
 * **Smooth Dimming:** use third-party buttons to dim your Hue lights smoothly.
-* **Set While Off:** set brightness, color, color temp and scenes without turning the lights on.
+* **Set Lights While Off:** set scenes, brightness, color and color temperature without turning the lights on.
 
 ## How It Helps You 🔅💡🔆
 
@@ -68,15 +68,17 @@ buttons_released:
 
 ---
 
-### Set Scene, Brightness, Color & Color Temperature While Light Is Off
+### Set Scenes, Brightness, Color & Color Temperature While Light Is Off
 
-Lets you set brightness, color, CT and scenes while lights are off, so that they turn on consistently how you want them without unwanted brightness or color flashes.
+Lets you set scenes, brightness, color and CT while lights are off, so that they turn on consistently how you want them without unwanted flashes.
 
 | Action | Description |
 | :--- | :--- |
-| `hue_dimmer.set_scene` | Set a Hue scene's brightness, color and color temp on its lights without turning them on |
+| `hue_dimmer.set_scene` | Set a Hue scene without turning lights on |
 | `hue_dimmer.set_attributes` | Set brightness, color temp or color without changing on/off state |
 | `hue_dimmer.get_attributes` | Get brightness, color temp and color (RGB, HS, XY). Returns one record per target |
+
+`get_attributes` reports a light's real values when it's off and during brightness transitions, when HA's reported values are wrong.
 
 | Field | Actions | Description |
 | :--- | :--- | :--- |
@@ -90,21 +92,12 @@ Lets you set brightness, color, CT and scenes while lights are off, so that they
 | `hs_color` | set_attributes | Color as `[hue, saturation]` (0–360, 0–100) |
 | `xy_color` | set_attributes | Color as `[x, y]` |
 
-With `set_scene`, lights come on in the scene the next time they're turned on. Good to know:
-
-* Lights that are already on change to the scene straight away.
-* Lights the scene turns off are turned off.
-* Static scenes only. All-Day (smart) scenes aren't supported yet.
-* Dynamic scenes are set to their first colors and don't animate.
-
-`get_attributes` reads a light's real values even when it's off, or during or just after a transition (when HA's reported brightness is briefly wrong).
-
 #### Automation Examples
 
 ##### YAML Example: Set Scene for Next Turn-On
 
 ```yaml
-description: Stage the Relax scene in the living room at 22:00.
+description: Stage the Relax scene in the living room at 22:00, without turning the lights on.
 triggers:
   - trigger: time
     at: "22:00:00"
