@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-import custom_components.hue_dimmer as hue_mod
+import custom_components.hue_dimmer.transitions as hue_mod
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ def patch_extract_entity_ids():
         return set(call.data.get("entity_id", []))
 
     with patch(
-        "custom_components.hue_dimmer.async_extract_entity_ids",
+        "custom_components.hue_dimmer.bridge.async_extract_entity_ids",
         side_effect=_extract,
     ):
         yield

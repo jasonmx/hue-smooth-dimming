@@ -13,5 +13,10 @@
     "create_entry": {
       "default": "Success! You can now use hue_dimmer actions in your automations."
     }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "Hue Smooth Dimmer is not loaded. Check the integration is set up and enabled."
+    }
   }
 }
