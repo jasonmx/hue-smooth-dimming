@@ -1,6 +1,6 @@
 # Philips Hue Smooth Dimmer
 
-[![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/philips-hue-smooth-dimmer?sort=date)](https://github.com/jasonmx/philips-hue-smooth-dimmer/releases)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/philips-hue-smooth-dimmer?sort=date)](https://github.com/jasonmx/philips-hue-smooth-dimmer/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
 This integration extends the core Philips Hue integration and lets you:
 * Use third-party buttons to dim your Hue lights smoothly.
@@ -160,6 +160,14 @@ actions:
     target:
       entity_id: scene.living_room_relax
 ```
+
+***
+
+## Known Limitations
+
+**Brightness reports the end value during a transition.** When a raise or lower starts, the Hue bridge reports the target brightness straight away (for example 100%), then checks the light's real brightness about 10 seconds later. During that window, dashboards, switch indicators and automations that read brightness see the end value, not the light's actual level.
+
+Dimming itself is unaffected: the integration tracks the real brightness internally, so stopping and restarting a dim carries on from where the light actually is. If an automation needs the real level mid-transition, read it with `hue_dimmer.get_attributes`, which returns the integration's predicted brightness rather than the bridge's end value.
 
 ***
 
