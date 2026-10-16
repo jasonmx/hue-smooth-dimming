@@ -10,8 +10,8 @@ This integration extends the core Philips Hue integration and lets you:
 
 ## How It Helps You 🔅💡🔆
 
-* **Smooth Dimming:** Dimming is continuous and precise. No more jittery repeat loops and dimming overshoots.
-* **Set While Off:** Prepare your lights to turn on how you want them. No more color flashes or brightness extremes as lights turn on.
+* **Silky Smooth:** Dimming is continuous and precise. No more jittery repeat loops and dimming overshoots.
+* **Predictable:** Prepare your lights to turn on how you want them. No more color flashes or brightness extremes as lights turn on.
 * **Zero Setup:** Finds your lights automatically via the core Philips Hue integration.
 
 ## Get Started
