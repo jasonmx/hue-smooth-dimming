@@ -1,6 +1,5 @@
 DOMAIN = "hue_dimmer"
-NAME = "Hue Smooth Dimmer"
-LEGACY_NAME = "Philips Hue Smooth Dimmer"  # Entry title before 0.5.0; migrated on setup
+NAME = "Hue Smooth Dimming"
 
 SERVICE_RAISE = "raise"
 SERVICE_LOWER = "lower"

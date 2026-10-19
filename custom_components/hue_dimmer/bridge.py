@@ -42,7 +42,7 @@ def _resolve_bridge(hass: HomeAssistant, entity_id: str):
 
     # V2 Bridge Check
     if getattr(bridge, "api_version", 1) < 2:
-        _LOGGER.error("Hue Smooth Dimmer requires a Bridge V2 or Bridge Pro for %s", entity_id)
+        _LOGGER.error("Hue Smooth Dimming requires a Bridge V2 or Bridge Pro for %s", entity_id)
         return None, None
 
     resource_id = entry.unique_id
