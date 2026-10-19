@@ -3,7 +3,7 @@
 [![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/philips-hue-smooth-dimmer?sort=date)](https://github.com/jasonmx/philips-hue-smooth-dimmer/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
 This integration extends the core Philips Hue integration and lets you:
-* **Dim Smoothly:** press to dim and release to stop, using third-party buttons. 
+* **Dim Smoothly:** press to dim and release to stop, using third-party buttons.
 * **Set Lights Without Turning On:** set brightness, color, color temperature or scenes.
 
 ## How It Helps You 🔅💡🔆
