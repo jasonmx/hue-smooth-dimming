@@ -66,7 +66,7 @@ buttons_released:
 
 ---
 
-### Set Lights While Off
+### Set Lights Without Turning On
 
 Set scenes, brightness, color and color temperature while the lights are off, so that they turn on how you want them without unwanted flashes.
 
