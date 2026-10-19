@@ -17,7 +17,7 @@ Keep **Settings → System → Logs** open, filtered on `hue_dimmer`.
 
 ## 1. Load and lifecycle
 
-- [ ] *Settings → Devices & services*: Hue Smooth Dimmer shows as loaded, and the log has no errors.
+- [ ] *Settings → Devices & services*: Hue Smooth Dimming shows as loaded, and the log has no errors.
 - [ ] Reload the integration (⋮ → *Reload*). Then run step 2.1. It still works.
 - [ ] Disable the integration entry, call any `hue_dimmer` action: it fails with a "not loaded"
       message, not "action not found". Re-enable it.

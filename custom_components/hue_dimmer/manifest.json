@@ -1,6 +1,6 @@
 {
   "domain": "hue_dimmer",
-  "name": "Hue Smooth Dimmer",
+  "name": "Hue Smooth Dimming",
   "codeowners": ["@jasonmx"],
   "config_flow": true,
   "dependencies": ["hue"],

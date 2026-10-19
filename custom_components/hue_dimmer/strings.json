@@ -1,14 +1,14 @@
 {
-  "title": "Hue Smooth Dimmer",
+  "title": "Hue Smooth Dimming",
   "config": {
     "step": {
       "user": {
-        "title": "Hue Smooth Dimmer",
+        "title": "Hue Smooth Dimming",
         "description": "Click submit to install."
       }
     },
     "abort": {
-      "single_instance_allowed": "Only a single instance of Hue Smooth Dimmer is needed."
+      "single_instance_allowed": "Only a single instance of Hue Smooth Dimming is needed."
     },
     "create_entry": {
       "default": "Success! You can now use hue_dimmer actions in your automations."
@@ -16,7 +16,7 @@
   },
   "exceptions": {
     "not_loaded": {
-      "message": "Hue Smooth Dimmer is not loaded. Check the integration is set up and enabled."
+      "message": "Hue Smooth Dimming is not loaded. Check the integration is set up and enabled."
     }
   }
 }

@@ -5,7 +5,7 @@ from .const import DOMAIN, NAME
 
 
 class HueDimmerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Hue Smooth Dimmer."""
+    """Handle a config flow for Hue Smooth Dimming."""
 
     VERSION = 1
 
