@@ -168,7 +168,7 @@ get_attributes:
 
 set_scene:
   name: Set scene
-  description: Set a Hue scene's brightness, color and color temp on its lights without turning them on.
+  description: Set a Hue scene without turning on its lights.
   target:
     entity:
       domain: scene

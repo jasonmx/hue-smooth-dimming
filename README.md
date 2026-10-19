@@ -4,13 +4,13 @@
 
 This integration extends the core Philips Hue integration and lets you:
 * **Dim Smoothly:** press to dim and release to stop, using third-party buttons. 
-* **Set Lights Without Turning On:** set scenes, brightness, color and color temperature.
+* **Set Lights Without Turning On:** set brightness, color, color temperature or scenes.
 
 ## How It Helps You 🔅💡🔆
 
-* **Silky Smooth:** Dimming is continuous and precise. No more jittery repeat loops and dimming overshoots.
-* **Predictable:** Prepare your lights to turn on how you want them. No more color flashes or brightness extremes as lights turn on.
-* **Zero Setup:** Finds your lights automatically via the core Philips Hue integration.
+* **Silky Smooth:** Dimming is continuous and precise. No more jittery dimming steps or brightness overshoots.
+* **Predictable:** Prepare your lights to turn on how you want them, without unwanted color flashes or brightness extremes.
+* **Zero Setup:** Connects to your lights automatically via the core Philips Hue integration.
 
 ## Get Started
 
@@ -34,7 +34,7 @@ This integration extends the core Philips Hue integration and lets you:
 
 ### Smooth Dimming
 
-Use these 3 actions in the HA Automations editor:
+Create polished “press to dim, release to stop" automations with the `raise`, `lower` and `stop` actions:
 
 | Action | Description |
 | :--- | :--- |
@@ -68,13 +68,13 @@ buttons_released:
 
 ### Set Lights Without Turning On
 
-Set scenes, brightness, color and color temperature while the lights are off, so that they turn on how you want them without unwanted flashes.
+Set scenes, brightness, color and color temperature while the lights are off, so that they turn on smoothly without unwanted color or brightness flashes.
 
 | Action | Description |
 | :--- | :--- |
 | `hue_dimmer.set_scene` | Set a Hue scene without turning lights on |
 | `hue_dimmer.set_attributes` | Set brightness, color temp or color without changing on/off state |
-| `hue_dimmer.get_attributes` | Reports a light's real brightness, color temp and color (RGB, HS, XY), even when the light is off or changing brightness (which HA can't do). Returns one record per target |
+| `hue_dimmer.get_attributes` | Reports a light's actual brightness, color temp and color (RGB, HS, XY), even when the light is off or changing brightness (which HA can't do). Returns one record per target |
 
 | Field | Actions | Description |
 | :--- | :--- | :--- |
@@ -152,9 +152,9 @@ If you add more than 10 lights, increase "max: 10" accordingly.
 
 ## Known Limitation
 
-When a raise or lower action starts, the Hue bridge reports the target brightness straight away (e.g. 100%), then corrects itself with the light's actual brightness about 10 seconds later. During that window, HA publishes the target (i.e. wrong) brightness to dashboards, switch indicators and automations.
+When a brightness transition starts, the Hue bridge reports the target brightness straight away (e.g. 100% or 0%) and only corrects itself 10 seconds after dimming stops. During that period, HA publishes the erroneous target brightness to dashboards, switch indicators and automations.
 
-If an automation needs to know a light's real brightness during or shortly after a dimming transition, read it with `hue_dimmer.get_attributes`.
+To access a light's real brightness during or just after a dimming transition, call the `hue_dimmer.get_attributes` action.
 
 ***
 
