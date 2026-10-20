@@ -1,6 +1,6 @@
 # Hue Smooth Dimming
 
-[![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/philips-hue-smooth-dimmer?sort=date)](https://github.com/jasonmx/philips-hue-smooth-dimmer/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/hue-smooth-dimming?sort=date)](https://github.com/jasonmx/hue-smooth-dimming/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
 This integration extends the core Philips Hue integration and lets you:
 * **Dim Smoothly:** press to dim and release to stop, using third-party buttons.
@@ -22,7 +22,7 @@ This integration extends the core Philips Hue integration and lets you:
 ### Install from HACS
 1. Open the Hue Smooth Dimming HACS repository
 
-[![Open the Hue Smooth Dimming HACS repository in your Home Assistant instance.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jasonmx&repository=philips-hue-smooth-dimmer&category=integration)
+[![Open the Hue Smooth Dimming HACS repository in your Home Assistant instance.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jasonmx&repository=hue-smooth-dimming&category=integration)
 
 2. Click **Download**
 3. Restart Home Assistant
