@@ -1,40 +1,40 @@
-# Philips Hue Smooth Dimmer
+# Hue Smooth Dimming
 
-[![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/philips-hue-smooth-dimmer?sort=date)](https://github.com/jasonmx/philips-hue-smooth-dimmer/releases)
+[![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/hue-smooth-dimming?sort=date)](https://github.com/jasonmx/hue-smooth-dimming/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
 This integration extends the core Philips Hue integration and lets you:
-* Use third-party buttons to dim your Hue lights smoothly.
-* Set brightness, color and color temp while lights are off.
+* **Dim Smoothly:** press to dim and release to stop, using third-party buttons.
+* **Set Lights Without Turning On:** set brightness, color, color temperature or scenes.
 
 ## How It Helps You 🔅💡🔆
 
-* **Silky Smooth:** Dimming is continuous and precise. No more jittery repeat loops and dimming overshoots.
-* **Predictable:** Prepare your lights to turn on how you want them. No more color flashes or brightness extremes as lights turn on.
-* **Zero Setup:** Finds your lights automatically via the core Philips Hue integration.
+* **Silky Smooth:** Dimming is continuous and precise. No more jittery dimming steps or brightness overshoots.
+* **Predictable:** Prepare your lights to turn on how you want them, without unwanted color flashes or brightness extremes.
+* **Zero Setup:** Connects to your lights automatically via the core Philips Hue integration.
 
 ## Get Started
 
 ### Requirements
 * Philips Hue Bridge V2 or Pro (V3)
 * **[Philips Hue integration](https://www.home-assistant.io/integrations/hue)** set up and connected to that bridge
-* Not supported: Hue bulbs paired directly to Zigbee2MQTT, ZHA or deCONZ without a bridge
+* Not supported: Hue bulbs paired to Zigbee2MQTT, ZHA or deCONZ without a Hue bridge
 
 ### Install from HACS
-1. Open the Philips Hue Smooth Dimmer HACS repository
+1. Open the Hue Smooth Dimming HACS repository
 
-[![Open the Philips Hue Smooth Dimmer HACS repository in your Home Assistant instance.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jasonmx&repository=philips-hue-smooth-dimmer&category=integration)
+[![Open the Hue Smooth Dimming HACS repository in your Home Assistant instance.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=jasonmx&repository=hue-smooth-dimming&category=integration)
 
 2. Click **Download**
 3. Restart Home Assistant
 4. Add the integration
 
-[![Add Philips Hue Smooth Dimmer to your Home Assistant instance.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_dimmer)
+[![Add Hue Smooth Dimming to your Home Assistant instance.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hue_dimmer)
 
 ## Usage
 
 ### Smooth Dimming
 
-Use these 3 actions in the HA Automations editor:
+Create polished “press to dim, release to stop" automations with the `raise`, `lower` and `stop` actions:
 
 | Action | Description |
 | :--- | :--- |
@@ -66,31 +66,46 @@ buttons_released:
 
 ---
 
-### Set Brightness, Color & Color Temperature While Light Is Off
+### Set Lights While Off
 
-* Eliminate color flashes and brightness extremes when lights turn on
-* Create consistent turn-on behavior across your home and automations
+Set scenes, brightness, color and color temperature while the lights are off, so that they turn on smoothly without unwanted color or brightness flashes.
 
 | Action | Description |
 | :--- | :--- |
+| `hue_dimmer.set_scene` | Set a Hue scene without turning lights on |
 | `hue_dimmer.set_attributes` | Set brightness, color temp or color without changing on/off state |
-| `hue_dimmer.get_attributes` | Get brightness, color temp and color (RGB, HS, XY), even if lights are off. Returns one record per target |
+| `hue_dimmer.get_attributes` | Reports a light's actual brightness, color temp and color (RGB, HS, XY), even when the light is off or changing brightness (which HA can't do). Returns one record per target |
 
-| Field | Description |
-| :--- | :--- |
-| `target` | Hue lights and groups (required) |
-| `brightness` | Brightness level (%) |
-| `min_brightness` | Enforce a minimum brightness (%) |
-| `max_brightness` | Enforce a maximum brightness (%) |
-| `color_temp_kelvin` | Color temperature (K) |
-| `rgb_color` | Color as `[red, green, blue]` (0–255 each) |
-| `hs_color` | Color as `[hue, saturation]` (0–360, 0–100) |
-| `xy_color` | Color as `[x, y]` |
+| Field | Actions | Description |
+| :--- | :--- | :--- |
+| `target` | set_scene | Hue scenes (required) |
+| `target` | set_attributes, get_attributes | Hue lights and groups (required) |
+| `brightness` | set_attributes | Brightness level (%) |
+| `min_brightness` | set_attributes | Enforce a minimum brightness (%) |
+| `max_brightness` | set_attributes | Enforce a maximum brightness (%) |
+| `color_temp_kelvin` | set_attributes | Color temperature (K) |
+| `rgb_color` | set_attributes | Color as `[red, green, blue]` (0–255 each) |
+| `hs_color` | set_attributes | Color as `[hue, saturation]` (0–360, 0–100) |
+| `xy_color` | set_attributes | Color as `[x, y]` |
 
-> **Breaking change:** the `get_attributes` response field `color_xy` is renamed to `xy_color`, for naming consistency with Home Assistant. Replace `color_xy` with `xy_color` in your automations.
+#### Automation Examples
 
+##### YAML Example: Set Scene for Next Turn-On
 
-#### GUI Automation Example: When lights turn off for an hour, set brightness for next turn-on
+```yaml
+description: Stage the Relax scene in the living room at 22:00, without turning the lights on.
+triggers:
+  - trigger: time
+    at: "22:00:00"
+actions:
+  - action: hue_dimmer.set_scene
+    target:
+      entity_id: scene.living_room_relax
+```
+
+##### GUI Example: Set Next Turn-On Brightness
+
+When lights turn off for an hour, set brightness for next turn-on.
 
 ![Set turn-on behavior](examples/update-lights-after-turn-off--step-2.png)
 
@@ -135,12 +150,20 @@ If you add more than 10 lights, increase "max: 10" accordingly.
 
 ***
 
+## Known Limitation
+
+When a brightness transition starts, the Hue bridge reports the target brightness straight away (e.g. 100% or 0%) and only corrects itself 10 seconds after dimming stops. During that period, HA publishes the erroneous target brightness to dashboards, switch indicators and automations.
+
+To access a light's real brightness during or just after a dimming transition, call the `hue_dimmer.get_attributes` action.
+
+***
+
 ## Uninstall
 
 This integration follows standard integration removal.
 
 1. Open the integration
 
-[![Open the Philips Hue Smooth Dimmer integration in your Home Assistant instance.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=hue_dimmer)
+[![Open the Hue Smooth Dimming integration in your Home Assistant instance.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=hue_dimmer)
 
 2. Open the ⋮ menu and choose **Delete**

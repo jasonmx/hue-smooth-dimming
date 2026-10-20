@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from custom_components.hue_dimmer import _handle_get_attributes
+from custom_components.hue_dimmer.services import _handle_get_attributes
 from tests.conftest import make_service_call
 
 RESOURCE_ID = "abc-123"
@@ -17,15 +17,6 @@ def make_light_model(brightness=50.0, mirek=370, xy=(0.4, 0.4)):
     return model
 
 
-@pytest.fixture(autouse=True)
-def patch_extract_entity_ids():
-    async def _extract(call):
-        return set(call.data.get("entity_id", []))
-
-    with patch("custom_components.hue_dimmer.async_extract_entity_ids", side_effect=_extract):
-        yield
-
-
 @pytest.mark.asyncio
 async def test_response_uses_xy_color_key(mock_hass):
     # Response field names must match set_attributes inputs and HA attribute names (issue #16).
@@ -34,7 +25,7 @@ async def test_response_uses_xy_color_key(mock_hass):
     mock_hass.states.get.return_value = None
     call = make_service_call({"entity_id": [ENTITY_ID]})
 
-    with patch("custom_components.hue_dimmer.resolve_entity", return_value=(bridge, "light", RESOURCE_ID)):
+    with patch("custom_components.hue_dimmer.bridge.resolve_entity", return_value=(bridge, "light", RESOURCE_ID)):
         result = await _handle_get_attributes(mock_hass, call)
 
     attrs = result[ENTITY_ID]

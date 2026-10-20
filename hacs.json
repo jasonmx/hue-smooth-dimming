@@ -1,5 +1,5 @@
 {
-  "name": "Philips Hue Smooth Dimmer",
+  "name": "Hue Smooth Dimming",
   "homeassistant": "2025.1.0",
   "render_readme": true
 }
