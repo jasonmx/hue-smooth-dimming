@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/jasonmx/hue-smooth-dimming/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.5.0rc1"
+  "version": "0.5.0"
 }
