@@ -1,5 +1,6 @@
 DOMAIN = "hue_dimmer"
 NAME = "Hue Smooth Dimming"
+LEGACY_NAMES = ("Philips Hue Smooth Dimmer", "Hue Smooth Dimmer")  # Earlier entry titles; migrated on setup
 
 SERVICE_RAISE = "raise"
 SERVICE_LOWER = "lower"
