@@ -18,6 +18,7 @@ This integration extends the core Philips Hue integration and lets you:
 * Philips Hue Bridge V2 or Pro (V3)
 * **[Philips Hue integration](https://www.home-assistant.io/integrations/hue)** set up and connected to that bridge
 * Not supported: Hue bulbs paired directly to Zigbee2MQTT, ZHA or deCONZ without a bridge
+* For other dimmable lights, including Hue bulbs paired without a bridge, see [Dynamic Dimming](https://github.com/nohat/dynamic_dimming)
 
 ### Install from HACS
 1. Open the Philips Hue Smooth Dimmer HACS repository
