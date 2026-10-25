@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from custom_components.hue_dimmer.const import DIR_UP
-from custom_components.hue_dimmer.services import _handle_get_attributes, _handle_transition
+from custom_components.hue_dimmer.services import _handle_get_attributes, _handle_stop, _handle_transition
 from custom_components.hue_dimmer.transitions import _brightness_cache
 from tests.conftest import make_service_call
 
@@ -61,3 +61,17 @@ async def test_group_get_attributes_predicts_mid_transition(mock_hass):
         result = await _handle_get_attributes(mock_hass, make_service_call({}))
 
     assert result[ENTITY_ID]["brightness"] == 40.0  # 20% + 2s at 10%/s
+
+
+@pytest.mark.asyncio
+async def test_failed_stop_keeps_moving_prediction(mock_hass):
+    # If the bridge rejects the stop, the light keeps moving, so the cache must keep predicting it.
+    bridge = MagicMock()
+    bridge.api.lights.set_dimming_delta = AsyncMock(side_effect=Exception("bridge unreachable"))
+    moving = {"time": NOW, "bright": 20.0, "target": 100.0, "dir": DIR_UP, "sweep": 10.0}
+    _brightness_cache[ENTITY_ID] = dict(moving)
+
+    with patch_targets(bridge):
+        await _handle_stop(mock_hass, make_service_call({}))
+
+    assert _brightness_cache[ENTITY_ID] == moving
