@@ -1,5 +1,10 @@
 # Hue Smooth Dimming
 
+> [!WARNING]
+> Hue Smooth Dimming is feature complete. Future releases will be security patches only.
+>
+> Consider migrating to [DeviceSide](https://github.com/jasonmx/DeviceSide), Hue Smooth Dimming's successor that works on Hue. Zigbee (ZHA/Zigbee2MQTT), Shelly and Matter, and adds new features like timed on/off and smooth color transitions.
+
 [![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/hue-smooth-dimming?sort=date)](https://github.com/jasonmx/hue-smooth-dimming/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
 This integration extends the core Philips Hue integration and lets you:
