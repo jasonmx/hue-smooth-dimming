@@ -7,10 +7,11 @@
 >
 > Its successor [DeviceSide](https://github.com/jasonmx/DeviceSide) extends Hue Smooth Dimming's features to Zigbee (ZHA/Zigbee2MQTT), Shelly and Matter, and adds smooth color transitions for Hue.
 >
-> DeviceSide's actions are drop-in replacements for Hue Smooth Dimming, with name changes on the `raise` and `lower` actions. To migrate, [install DeviceSide from Marketplace](https://my.home-assistant.io/redirect/hacs_repository/?owner=jasonmx&repository=DeviceSide&category=integration) and apply these changes in your YAML:
-> `hue_dimmer.raise` → `deviceside.raise_brightness`
-> `hue_dimmer.lower` → `deviceside.lower_brightness`
-> `hue_dimmer → deviceside`
+> DeviceSide's actions are drop-in replacements for Hue Smooth Dimming, with name changes on the `raise` and `lower` actions.
+> To migrate, [install DeviceSide from Marketplace](https://my.home-assistant.io/redirect/hacs_repository/?owner=jasonmx&repository=DeviceSide&category=integration) and apply these changes in your YAML:
+> * `hue_dimmer.raise` → `deviceside.raise_brightness`
+> * `hue_dimmer.lower` → `deviceside.lower_brightness`
+> * `hue_dimmer → deviceside`
 
 Hue Smooth Dimming extends the core Philips Hue integration and lets you:
 * **Dim Smoothly:** press to dim and release to stop, using third-party buttons.
