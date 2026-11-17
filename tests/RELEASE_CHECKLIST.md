@@ -21,6 +21,10 @@ Keep **Settings → System → Logs** open, filtered on `hue_dimmer`.
 - [ ] Reload the integration (⋮ → *Reload*). Then run step 2.1. It still works.
 - [ ] Disable the integration entry, call any `hue_dimmer` action: it fails with a "not loaded"
       message, not "action not found". Re-enable it.
+- [ ] *Settings → System → Repairs* shows "Hue Smooth Dimming is replaced by DeviceSide". Open it:
+      the *Install DeviceSide from Marketplace* link opens DeviceSide in Marketplace, and *Learn
+      more* opens DeviceSide's "Coming from Hue Smooth Dimming?" notes. Ignore it, restart HA: it
+      stays ignored (shown only under *Show ignored repairs*).
 
 ## 2. Transitions (run each on `light.test_lamp`, then `light.test_room`)
 
