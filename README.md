@@ -13,7 +13,7 @@
 > * `hue_dimmer.lower` → `deviceside.lower_brightness`
 > * every other `hue_dimmer.` → `deviceside.`
 >
-> The fields and responses are the same. Both can run side by side while you switch. Once no automation or script calls `hue_dimmer.`, remove the Hue Smooth Dimming integration. More in [DeviceSide's migration notes](https://github.com/DeviceSide/DeviceSide#coming-from-hue-smooth-dimming).
+> The fields and responses are the same. Both can run side by side while you switch. Once no automation or script calls `hue_dimmer.`, remove the Hue Smooth Dimming integration.
 
 Hue Smooth Dimming extends the core Philips Hue integration and lets you:
 * **Dim Smoothly:** press to dim and release to stop, using third-party buttons.
