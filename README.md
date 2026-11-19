@@ -5,7 +5,7 @@
 > [!WARNING]
 > Hue Smooth Dimming is no longer being developed.
 >
-> Its successor [DeviceSide](https://github.com/DeviceSide/DeviceSide) extends Hue Smooth Dimming's features to Zigbee (ZHA/Zigbee2MQTT), Shelly and Matter, and adds smooth color transitions for Hue.
+> Its successor [DeviceSide](https://github.com/DeviceSide/DeviceSide) extends Hue Smooth Dimming's features to Zigbee (ZHA/Zigbee2MQTT), Shelly, Matter and Control4, and adds smooth color transitions for Hue.
 >
 > DeviceSide's actions are drop-in replacements for Hue Smooth Dimming's, apart from `raise` and `lower` which are renamed.
 > To migrate, [install DeviceSide from Marketplace](https://my.home-assistant.io/redirect/hacs_repository/?owner=DeviceSide&repository=DeviceSide&category=integration) and apply these changes in your YAML:
