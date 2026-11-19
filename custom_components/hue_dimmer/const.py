@@ -2,6 +2,13 @@ DOMAIN = "hue_dimmer"
 NAME = "Hue Smooth Dimming"
 LEGACY_NAMES = ("Philips Hue Smooth Dimmer", "Hue Smooth Dimmer")  # Earlier entry titles; migrated on setup
 
+# Repair pointing users to DeviceSide, the successor integration.
+ISSUE_REPLACED_BY_DEVICESIDE = "replaced_by_deviceside"
+DEVICESIDE_URL = "https://github.com/DeviceSide/DeviceSide"
+DEVICESIDE_INSTALL_URL = (
+    "https://my.home-assistant.io/redirect/hacs_repository/?owner=DeviceSide&repository=DeviceSide&category=integration"
+)
+
 SERVICE_RAISE = "raise"
 SERVICE_LOWER = "lower"
 SERVICE_STOP = "stop"
