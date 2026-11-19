@@ -2,7 +2,20 @@
 
 [![HACS Default](https://img.shields.io/badge/HACS-Default-orange.svg)](https://hacs.xyz/) ![Installs](https://img.shields.io/badge/dynamic/json?color=blue&label=Installs&query=hue_dimmer.total&url=https://analytics.home-assistant.io/custom_integrations.json) [![Latest Version](https://img.shields.io/github/v/release/jasonmx/hue-smooth-dimming?sort=date)](https://github.com/jasonmx/hue-smooth-dimming/releases) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/jasonmx)
 
-This integration extends the core Philips Hue integration and lets you:
+> [!WARNING]
+> Hue Smooth Dimming is no longer being developed.
+>
+> Its successor [DeviceSide](https://github.com/DeviceSide/DeviceSide) extends Hue Smooth Dimming's features to Zigbee (ZHA/Zigbee2MQTT), Shelly and Matter, and adds smooth color transitions for Hue.
+>
+> DeviceSide's actions are drop-in replacements for Hue Smooth Dimming's, apart from `raise` and `lower` which are renamed.
+> To migrate, [install DeviceSide from Marketplace](https://my.home-assistant.io/redirect/hacs_repository/?owner=DeviceSide&repository=DeviceSide&category=integration) and apply these changes in your YAML:
+> * `hue_dimmer.raise` → `deviceside.raise_brightness`
+> * `hue_dimmer.lower` → `deviceside.lower_brightness`
+> * every other `hue_dimmer.` → `deviceside.`
+>
+> The fields and responses are the same. Both can run side by side while you switch. Once no automation or script calls `hue_dimmer.`, remove the Hue Smooth Dimming integration.
+
+Hue Smooth Dimming extends the core Philips Hue integration and lets you:
 * **Dim Smoothly:** press to dim and release to stop, using third-party buttons.
 * **Set Lights Without Turning On:** set brightness, color, color temperature or scenes.
 
