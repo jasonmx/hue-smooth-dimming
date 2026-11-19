@@ -21,8 +21,8 @@
   },
   "issues": {
     "replaced_by_deviceside": {
-      "title": "Hue Smooth Dimming is replaced by DeviceSide",
-      "description": "Hue Smooth Dimming is no longer being developed. Its successor, DeviceSide, has drop-in replacements for its actions. [Install DeviceSide from Marketplace]({install_url}), then in your automations and scripts, change:\n\n- `hue_dimmer.raise` to `deviceside.raise_brightness`\n- `hue_dimmer.lower` to `deviceside.lower_brightness`\n- every other `hue_dimmer.` to `deviceside.`\n\nThe fields and responses are the same. Both can run side by side while you switch, and Ignore hides this notice for good. Once no automation or script calls `hue_dimmer.`, remove the Hue Smooth Dimming integration."
+      "title": "Hue Smooth Dimming is being replaced by DeviceSide",
+      "description": "Hue Smooth Dimming is no longer being developed. Its successor, DeviceSide, has drop-in replacements for its actions, and adds support for Zigbee2MQTT, ZHA, Shelly, Matter and Control4. [Install DeviceSide from Marketplace]({install_url}), then in your automations and scripts, change:\n\n- `hue_dimmer.raise` to `deviceside.raise_brightness`\n- `hue_dimmer.lower` to `deviceside.lower_brightness`\n- every other `hue_dimmer.` to `deviceside.`\n\nThe fields and responses are the same. Both can run side by side while you switch, and Ignore hides this notice for good. Once no automation or script calls `hue_dimmer.`, remove the Hue Smooth Dimming integration."
     }
   }
 }

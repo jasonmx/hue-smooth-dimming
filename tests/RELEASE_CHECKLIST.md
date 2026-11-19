@@ -21,7 +21,7 @@ Keep **Settings → System → Logs** open, filtered on `hue_dimmer`.
 - [ ] Reload the integration (⋮ → *Reload*). Then run step 2.1. It still works.
 - [ ] Disable the integration entry, call any `hue_dimmer` action: it fails with a "not loaded"
       message, not "action not found". Re-enable it.
-- [ ] *Settings → System → Repairs* shows "Hue Smooth Dimming is replaced by DeviceSide". Open it:
+- [ ] *Settings → System → Repairs* shows "Hue Smooth Dimming is being replaced by DeviceSide". Open it:
       the *Install DeviceSide from Marketplace* link opens DeviceSide in Marketplace, and *Learn
       more* opens DeviceSide's GitHub repo. Ignore it, restart HA: it
       stays ignored (shown only under *Show ignored repairs*).
